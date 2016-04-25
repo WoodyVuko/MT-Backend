@@ -7,20 +7,26 @@ var sName = mongoose.Schema({
   username : String
 },{collection : "accounts"});
 
-var kitten = mongoose.model('DasHierIstDerMapper',sName);
+// var Personen = mongoose.model('DasHierIstDerMapper',sName);
+var Person = mongoose.model('Person', sName);
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
 
 
-
-  kitten.find(function(err, names){
-    if (err) return console.error(err);
-    console.log(names);
+/* Totaler Inhalt (JSON) von names ...
+  Personen.find(function(err, names){
     res.json(names);
-    console.log("test");
-    // here ...
-  });
+*/
+
+// Finde Person mit 'Username' = temp und gib _id  bzw. _id UND username zurück
+// Person.findOne({ 'username': 'temp' }, '_id', function (err, person) {
+  Person.findOne({ 'username': 'temp' }, 'username',  '_id', function (err, person) {
+    if (err) return handleError(err);
+    console.log('%s has the _id: %s.', person.username, person._id )// temp has the _id: 571dd0d1bc3b1eff7151e2be.
+    //res.valueOf().username;
+    res.json(person);
+  })
 
 
 });
