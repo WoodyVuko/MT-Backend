@@ -4,8 +4,8 @@ var mongoose = require('mongoose');
 
 var sName = mongoose.Schema({
   _id : String,
-  name : String
-},{collection : "test"});
+  username : String
+},{collection : "accounts"});
 
 var kitten = mongoose.model('DasHierIstDerMapper',sName);
 

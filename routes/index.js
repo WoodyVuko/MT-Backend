@@ -50,7 +50,7 @@ router.post('/login', passport.authenticate('local', { failureRedirect: '/', fai
     if (err) {
       return next(err);
     }
-    res.redirect('/');
+    res.redirect('/home');
   });
 });
 
