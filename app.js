@@ -11,9 +11,10 @@ var LocalStrategy = require('passport-local').Strategy;
 var flash = require('connect-flash');
 
 var routes = require('./routes/index');
+var router      =   express.Router();
 var users = require('./routes/users');
 var home = require('./routes/home');
-
+var article = require('./routes/article');
 
 var app = express();
 
@@ -38,10 +39,11 @@ app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-app.use('/', routes);
+//app.use('/', routes);
+app.use('/', router);
 app.use('/users', users);
 app.use('/home', home);
-
+app.use('/article/', article);
 
 
 // passport config
@@ -83,6 +85,8 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
+
+
 
 
 module.exports = app;

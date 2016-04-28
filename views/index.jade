@@ -1,9 +1,0 @@
-extends layout
-
-block content
-    if (!user)
-        a(href="/login") Login
-        br
-        a(href="/register") Register
-    h1= title
-    p Welcome to #{title}
