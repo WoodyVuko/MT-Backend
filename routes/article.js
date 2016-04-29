@@ -58,7 +58,7 @@ router.route("/add")
 /********* CRUD /find by ID ********************/
 /***********************************************/
 
-router.route("/find/:id")
+router.route("/findID/:id")
     .get(function(req,res){
         var response = {};
         dbArticle.findById(req.params.id,function(err,data){
@@ -99,7 +99,6 @@ router.route("/find/:id")
                 if(req.body.img !== undefined) {
                     data.img = req.body.img;
                 }
-
                 // save the data
                 data.save(function(err){
                     if(err) {
@@ -120,7 +119,7 @@ router.route("/find/:id")
                 response = {"error": true, "message": "Error fetching data"};
             } else {
                 // data exists, remove it.
-                dbUser.remove({_id: req.params.id}, function (err) {
+                dbArticle.remove({_id: req.params.id}, function (err) {
                     if (err) {
                         response = {"error": true, "message": "Error deleting data"};
                     } else {
@@ -155,6 +154,8 @@ router.route("/find/:name")
         });
     });
 
-
+router.route("/")
+    .get(function(req,res){
+        res.json({"error" : false,"message" : "Welcome to /article/"});    });
 module.exports = router;
 
