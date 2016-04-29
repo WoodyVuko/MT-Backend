@@ -11,7 +11,7 @@
 
 var express = require('express');
 var passport = require('passport');
-var Account = require('../models/account');
+var Account = require('../models/userSchema');
 var router = express.Router();
 
 router.get('/getCatalog', function (req, res) {
