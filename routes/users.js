@@ -26,17 +26,20 @@ router.route("/all")
 /********* Register a User  ********************/
 /***********************************************/
 
+// Notiz: Doppelte Einträge
+
 router.route("/register")
     .get(function(req,res){
       //------------------------------------------------------
     })
     .post(function(req,res){
-      //console.log(data);
+      console.log(req.body);
       var db = new dbUser;
       var response = {};
       // fetch email and password from REST request.
       // Add strict validation when you use this in Production.
       db.username = req.body.username;
+      db.lastname = req.body.lastname;
       db.email = req.body.email;
       db.company = req.body.company;
       db.city = req.body.city;
@@ -45,6 +48,7 @@ router.route("/register")
       db.streetnumber = req.body.streetnumber;
       // Password is getting crypted at the Schema
       db.password = req.body.password;
+      db.firstname = req.body.firstname;
       db.save(function(err){
         // save() will run insert() command of MongoDB.
         // it will add new data in collection.
@@ -59,14 +63,14 @@ router.route("/register")
     });
 
 
-/********* CRUD /Users by ID ********************/
+/********* CRUD find by ID *********************/
 /***********************************************/
 
-router.route("/find/:id")
+router.route("/findID/:id")
     .get(function(req,res){
       var response = {};
       dbUser.findById(req.params.id,function(err,data){
-    console.log(err);
+    //console.log(err);
         // This will run Mongo Query to fetch data based on ID.
         if(err) {
           response = {"error" : true,"message" : "Error fetching data"};
@@ -114,6 +118,12 @@ router.route("/find/:id")
           if(req.body.streetnumber !== undefined) {
             data.streetnumber = req.body.streetnumber;
           }
+          if(req.body.firstname !== undefined) {
+            data.firstname = req.body.firstname;
+          }
+          if(req.body.lastname !== undefined) {
+            data.lastname = req.body.lastname;
+          }
           // save the data
           data.save(function(err){
             if(err) {
@@ -151,12 +161,13 @@ router.route("/find/:id")
 
 
 /********* CRUD /Users by eMail ********************/
-/***********************************************/
-router.route("/findEmail/:email")
+/****************************************************/
+router.route("/find/:term")
     .get(function(req,res){
       var response = {};
-      dbUser.findOne({ 'email': req.params.email }, 'email',function(err,data){
-      console.log(data);
+
+      dbUser.findOne({ "email" : req.params.term }, 'email',function(err,data){
+      //console.log(data);
         // This will run Mongo Query to fetch data based on email.
         if(err) {
           response = {"error" : true,"message" : "Error fetching data"};
@@ -165,55 +176,6 @@ router.route("/findEmail/:email")
           //console.log(data);
         }
         res.json(response);
-      });
-    })
-    .put(function(req,res){
-      var response = {};
-      // first find out record exists or not
-      // if it does then update the record
-      dbUser.findOne({ 'username': req.params.email }, 'username',function(err,data){
-        if(err) {
-          response = {"error" : true,"message" : "Error fetching data"};
-        } else {
-          // we got data from Mongo.
-          // change it accordingly.
-          if(req.body.email!== undefined) {
-            // case where email needs to be updated.
-            data.email = req.body.email;
-          }
-          if(req.body.password !== undefined) {
-            // case where password needs to be updated
-            data.password = req.body.password;
-          }
-          if(req.body.username !== undefined) {
-            // case where password needs to be updated
-            data.username = req.body.username;
-          }
-          if(req.body.company !== undefined) {
-            data.company = req.body.company;
-          }
-          if(req.body.city !== undefined) {
-            data.city = req.body.city;
-          }
-          if(req.body.zip !== undefined) {
-            data.zip = req.body.zip;
-          }
-          if(req.body.street !== undefined) {
-            data.street = req.body.street;
-          }
-          if(req.body.streetnumber !== undefined) {
-            data.streetnumber = req.body.streetnumber;
-          }
-          // save the data
-          data.save(function(err){
-            if(err) {
-              response = {"error" : true,"message" : "Error updating data"};
-            } else {
-              response = {"error" : false,"message" : "Data is updated for "+req.params.id};
-            }
-            res.json(response);
-          })
-        }
       });
     });
 

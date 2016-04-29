@@ -26,6 +26,8 @@ var Account = new Schema({
     username: String,
     email: String,
     password: {type: String, get: decrypt, set: encrypt},
+    firstname: String,
+    lastname: String,
     company: String,
     city: String,
     zip: String,
