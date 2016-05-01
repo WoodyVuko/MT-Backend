@@ -186,5 +186,4 @@ router.route("/")
       res.json({"error" : false,"message" : "Welcome to /users/"});    });
 module.exports = router;
 
-module.exports = router;
 

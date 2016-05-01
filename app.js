@@ -15,6 +15,8 @@ var router      =   express.Router();
 var users = require('./routes/users');
 var home = require('./routes/home');
 var article = require('./routes/article');
+var groups = require('./routes/groups');
+
 
 var app = express();
 
@@ -44,6 +46,7 @@ app.use('/', router);
 app.use('/users', users);
 app.use('/home', home);
 app.use('/article/', article);
+app.use('/groups', groups);
 
 
 // passport config
