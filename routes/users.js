@@ -1,13 +1,13 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
+var uniqueValidator = require('mongoose-unique-validator');
 
 // Accesspoint to Database
 var dbUser  = require('../models/userSchema');
 
 /********* Get all Users  **********************/
 /***********************************************/
-
 router.route("/all")
     .get(function(req,res){
       var response = {};
@@ -33,7 +33,7 @@ router.route("/register")
       //------------------------------------------------------
     })
     .post(function(req,res){
-      console.log(req.body);
+      //console.log(req.body);
       var db = new dbUser;
       var response = {};
       // fetch email and password from REST request.
@@ -53,8 +53,7 @@ router.route("/register")
         // save() will run insert() command of MongoDB.
         // it will add new data in collection.
         if(err) {
-          response = {"error" : true,"message" : "Error adding data"};
-          console.log(err);
+          response = {"error" : true,"message" : "Error adding data", "message" : err.errors};
         } else {
           response = {"error" : false,"message" : "Data added"};
         }
@@ -65,7 +64,6 @@ router.route("/register")
 
 /********* CRUD find by ID *********************/
 /***********************************************/
-
 router.route("/findID/:id")
     .get(function(req,res){
       var response = {};
@@ -85,7 +83,7 @@ router.route("/findID/:id")
       var response = {};
       // first find out record exists or not
       // if it does then update the record
-      dbUser.findById(req.params.id,function(err,data){
+      dbUser.findById(req.params.id ,{ runValidators: true, context: 'query' }, function(err,data){
         if(err) {
           response = {"error" : true,"message" : "Error fetching data"};
         } else {
@@ -127,7 +125,7 @@ router.route("/findID/:id")
           // save the data
           data.save(function(err){
             if(err) {
-              response = {"error" : true,"message" : "Error updating data"};
+              response = {"error" : true,"message" : "Error updating data", "message" : err.errors};
             } else {
               response = {"error" : false,"message" : "Data is updated for "+req.params.id};
             }

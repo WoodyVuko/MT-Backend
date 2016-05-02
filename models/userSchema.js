@@ -3,6 +3,9 @@
  */
 
 var mongoose = require('mongoose');
+var uniqueValidator = require('mongoose-unique-validator');
+
+
 var Schema = mongoose.Schema;
 //var passportLocalMongoose = require('passport-local-mongoose');
 var crypto = require('crypto');
@@ -22,19 +25,20 @@ function decrypt(text){
     dec += decipher.final('utf8');
     return dec;
 }
-var Account = new Schema({
-    username: String,
-    email: String,
-    password: {type: String, get: decrypt, set: encrypt},
-    firstname: String,
-    lastname: String,
-    company: String,
-    city: String,
-    zip: String,
-    street: String,
-    streetnumber: String
+var Account = new mongoose.Schema({
+    username: { type: String, required: true, unique: true, uniqueCaseInsensitive: false},
+    email: { type: String, required: true, unique: true, uniqueCaseInsensitive: false},
+    password: {type: String, get: decrypt, set: encrypt, required: true},
+    firstname: { type: String, required: true },
+    lastname: { type: String, required: true },
+    company: { type: String, required: true },
+    city: { type: String, required: true },
+    zip: { type: String, required: true },
+    street: { type: String, required: true },
+    streetnumber: { type: String, required: true }
 },{collection : "userLogins"});
-//},{collection : "accounts"});
-//Account.plugin(passportLocalMongoose);
+
+Account.plugin(uniqueValidator);
 
 module.exports = mongoose.model('userLogin', Account);
+
