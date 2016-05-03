@@ -11,7 +11,7 @@ var dbGroups  = require('../models/groupsSchema');
 /********* Get all Groups  **********************/
 /***********************************************/
 
-router.route("/all")
+router.route("/")
     .get(function(req,res){
         var response = {};
         dbGroups.find({},function(err,data){
@@ -64,20 +64,34 @@ router.route("/add")
 /********* CRUD find by ID *********************/
 /***********************************************/
 
-router.route("/findID/:id")
+router.route("/:id")
     .get(function(req,res){
         var response = {};
-        dbGroups.findById(req.params.id,function(err,data){
-            //console.log(err);
-            // This will run Mongo Query to fetch data based on ID.
-            if(err) {
-                response = {"error" : true,"message" : "Error fetching data"};
-            } else {
-                response = {"error" : false,"message" : data};
-                console.log(data);
-            }
-            res.json(response);
-        });
+        if(req.params.id.indexOf("1") > -1 || req.params.id.indexOf("2") > -1 || req.params.id.indexOf("3") > -1 || req.params.id.indexOf("4") > -1 || req.params.id.indexOf("5") > -1 || req.params.id.indexOf("6") > -1 || req.params.id.indexOf("7") > -1 || req.params.id.indexOf("8") > -1 || req.params.id.indexOf("9") > -1)  {
+            dbGroups.findById(req.params.id,function(err,data){
+                //console.log(err);
+                // This will run Mongo Query to fetch data based on ID.
+                if(err) {
+                    response = {"error" : true,"message" : "Error fetching data"};
+                } else {
+                    response = {"error" : false,"message" : data};
+                    console.log(data);
+                }
+                res.json(response);
+            });
+        }
+        else {
+            dbGroups.findOne({ "name" : req.params.id }, 'name',function(err,data){
+                // console.log(data);
+                // This will run Mongo Query to fetch data based on email.
+                if(err) {
+                    response = {"error" : true,"message" : "Error fetching data"};
+                } else {
+                    response = {"error" : false,"message" : data};
+                }
+                res.json(response);
+            });
+        }
     })
     .put(function(req,res){
         var response = {};
@@ -141,32 +155,6 @@ router.route("/findID/:id")
         });
     });
 
-
-
-/********* CRUD /groups by name ********************/
-/****************************************************/
-router.route("/find/:term")
-    .get(function(req,res){
-        var response = {};
-
-        dbGroups.findOne({ "name" : req.params.term }, 'name',function(err,data){
-            // console.log(data);
-            // This will run Mongo Query to fetch data based on email.
-            if(err) {
-                response = {"error" : true,"message" : "Error fetching data"};
-            } else {
-                response = {"error" : false,"message" : data};
-                //console.log(data);
-            }
-            res.json(response);
-        });
-    });
-
-
-
-router.route("/")
-    .get(function(req,res){
-        res.json({"error" : false,"message" : "Welcome to /groups/"});    });
 module.exports = router;
 
 

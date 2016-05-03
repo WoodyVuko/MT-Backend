@@ -10,7 +10,7 @@ var dbArticle  = require('../models/articleSchema');
 
 /********* Get all Articels  ********************/
 /***********************************************/
-router.route("/all")
+router.route("/")
     .get(function(req,res){
         var response = {};
         dbArticle.find({},function(err,data){
@@ -58,21 +58,35 @@ router.route("/add")
 /********* CRUD /find by ID ********************/
 /***********************************************/
 
-router.route("/findID/:id")
+router.route("/:id")
     .get(function(req,res){
         var response = {};
-        dbArticle.findById(req.params.id,function(err,data){
-            console.log(err);
-            // This will run Mongo Query to fetch data based on ID.
-            if(err) {
-                response = {"error" : true,"message" : "Error fetching data"};
-            } else {
-                response = {"error" : false,"message" : data};
-                console.log(data);
+        if(req.params.id.indexOf("1") > -1 || req.params.id.indexOf("2") > -1 || req.params.id.indexOf("3") > -1 || req.params.id.indexOf("4") > -1 || req.params.id.indexOf("5") > -1 || req.params.id.indexOf("6") > -1 || req.params.id.indexOf("7") > -1 || req.params.id.indexOf("8") > -1 || req.params.id.indexOf("9") > -1)  {
+            dbArticle.findById(req.params.id,function(err,data){
+                console.log(err);
+                // This will run Mongo Query to fetch data based on ID.
+                if(err) {
+                    response = {"error" : true,"message" : "Error fetching data"};
+                } else {
+                    response = {"error" : false,"message" : data};
+                    console.log(data);
+                }
+                res.json(response);
+                });
             }
-            res.json(response);
-        });
-    })
+        else{
+            dbArticle.findOne({ 'name': req.params.id }, 'name',function(err,data){
+                //console.log(data);
+                if(err) {
+                    response = {"error" : true,"message" : "Error fetching data"};
+                } else {
+                    response = {"error" : false,"message" : data};
+                    //console.log(data);
+                }
+                res.json(response);
+            });
+        }
+        })
     .put(function(req,res){
         var response = {};
         // first find out record exists or not
@@ -133,29 +147,7 @@ router.route("/findID/:id")
         });
     });
 
-/********* CRUD /find by name  ********************/
-/**************************************************/
 
-// Notiz: Case-Sensitiv
-router.route("/find/:name")
-    .get(function(req,res){
-        var response = {};
 
-        dbArticle.findOne({ 'name': req.params.name }, 'name',function(err,data){
-            console.log(data);
-            // This will run Mongo Query to fetch data based on email.
-            if(err) {
-                response = {"error" : true,"message" : "Error fetching data"};
-            } else {
-                response = {"error" : false,"message" : data};
-                //console.log(data);
-            }
-            res.json(response);
-        });
-    });
-
-router.route("/")
-    .get(function(req,res){
-        res.json({"error" : false,"message" : "Welcome to /article/"});    });
 module.exports = router;
 
