@@ -8,7 +8,7 @@ var dbUser  = require('../models/userSchema');
 
 /********* Get all Users  **********************/
 /***********************************************/
-router.route("/all")
+router.route("/")
     .get(function(req,res){
       var response = {};
       dbUser.find({},function(err,data){
@@ -64,21 +64,41 @@ router.route("/register")
 
 /********* CRUD find by ID *********************/
 /***********************************************/
-router.route("/findID/:id")
+router.route("/:id")
     .get(function(req,res){
       var response = {};
-      dbUser.findById(req.params.id,function(err,data){
-    //console.log(err);
-        // This will run Mongo Query to fetch data based on ID.
-        if(err) {
-          response = {"error" : true,"message" : "Error fetching data"};
-        } else {
-          response = {"error" : false,"message" : data};
-          console.log(data);
-        }
-        res.json(response);
-      });
-    })
+      //console.log(req.params.id);
+
+      /********* Check if eMail or ID ****************/
+      /***********************************************/
+      if(req.params.id.indexOf("@") > -1) {
+        dbUser.findOne({ "email" : req.params.id }, 'email',function(err,data){
+          //console.log(data);
+          // This will run Mongo Query to fetch data based on email.
+          if(err) {
+            response = {"error" : true,"message" : "Error fetching data"};
+          } else {
+            response = {"error" : false,"message" : data};
+            console.log(data);
+          }
+          res.json(response);
+        });
+      }
+      else
+      {
+        dbUser.findById(req.params.id,function(err,data) {
+          if (err) {
+            //console.log(err);
+            response = {"error": true, "message": "Error fetching data"};
+          } else {
+            response = {"error": false, "message": data};
+            //console.log(data);
+          }
+          res.json(response);
+        })
+      }
+      })
+
     .put(function(req,res){
       var response = {};
       // first find out record exists or not
@@ -156,32 +176,6 @@ router.route("/findID/:id")
       });
     });
 
-
-
-/********* CRUD /Users by eMail ********************/
-/****************************************************/
-router.route("/find/:term")
-    .get(function(req,res){
-      var response = {};
-
-      dbUser.findOne({ "email" : req.params.term }, 'email',function(err,data){
-      //console.log(data);
-        // This will run Mongo Query to fetch data based on email.
-        if(err) {
-          response = {"error" : true,"message" : "Error fetching data"};
-        } else {
-          response = {"error" : false,"message" : data};
-          //console.log(data);
-        }
-        res.json(response);
-      });
-    });
-
-
-
-router.route("/")
-    .get(function(req,res){
-      res.json({"error" : false,"message" : "Welcome to /users/"});    });
 module.exports = router;
 
 
