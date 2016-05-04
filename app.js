@@ -17,6 +17,8 @@ var home = require('./routes/home');
 var article = require('./routes/article');
 var groups = require('./routes/groups');
 
+var cors = require('cors');
+
 
 var app = express();
 
@@ -26,6 +28,7 @@ app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(cors());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -53,7 +56,13 @@ app.use('/groups', groups);
 var Account = require('./models/userSchema');
 
 // mongoose
-mongoose.connect("mongodb://localhost/temp");
+mongoose.connect("mongodb://localhost/Restorani");
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
