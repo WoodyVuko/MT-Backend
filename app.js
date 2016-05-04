@@ -44,8 +44,8 @@ app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-//app.use('/', routes);
-app.use('/', router);
+app.use('/', routes);
+//app.use('/', index);
 app.use('/users', users);
 app.use('/home', home);
 app.use('/article/', article);
@@ -53,16 +53,18 @@ app.use('/groups', groups);
 
 
 // passport config
-var Account = require('./models/userSchema');
-
+var Account = require('./models/accountSchema');
+passport.use(new LocalStrategy(Account.authenticate()));
+passport.serializeUser(Account.serializeUser());
+passport.deserializeUser(Account.deserializeUser());
 // mongoose
 mongoose.connect("mongodb://localhost/Restorani");
 
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
+//app.use(function(req, res, next) {
+//  res.header("Access-Control-Allow-Origin", "*");
+//  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//  next();
+//});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

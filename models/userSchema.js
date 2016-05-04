@@ -4,6 +4,7 @@
 
 var mongoose = require('mongoose');
 var uniqueValidator = require('mongoose-unique-validator');
+var passportLocalMongoose = require('passport-local-mongoose');
 
 
 var Schema = mongoose.Schema;
@@ -39,6 +40,7 @@ var Account = new mongoose.Schema({
 },{collection : "userLogins"});
 
 Account.plugin(uniqueValidator);
+Account.plugin(passportLocalMongoose);
 
 module.exports = mongoose.model('userLogin', Account);
 
