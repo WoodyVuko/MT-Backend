@@ -16,11 +16,15 @@ var users = require('./routes/users');
 var home = require('./routes/home');
 var article = require('./routes/article');
 var groups = require('./routes/groups');
+var config = require('./private/config'); // get our config file
 
 var cors = require('cors');
 
 
 var app = express();
+
+var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
+app.set('superSecret', config.secret); // secret variable
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -58,7 +62,7 @@ passport.use(new LocalStrategy(Account.authenticate()));
 passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());
 // mongoose
-mongoose.connect("mongodb://localhost/Restorani");
+mongoose.connect(config.database);
 
 //app.use(function(req, res, next) {
 //  res.header("Access-Control-Allow-Origin", "*");
