@@ -10,10 +10,10 @@ var passportLocalMongoose = require('passport-local-mongoose');
 var Schema = mongoose.Schema;
 //var passportLocalMongoose = require('passport-local-mongoose');
 var crypto = require('crypto');
-var SERVER_SECRET = "liefbnewobgkjweb";
+var config = require('../private/config'); // get our config file
 
 function encrypt(text){
-    var cipher = crypto.createCipher('aes-256-cbc', SERVER_SECRET);
+    var cipher = crypto.createCipher('aes-256-cbc', config.secret);
     var crypted = cipher.update(text,'utf8','hex');
     crypted += cipher.final('hex');
     return crypted;
@@ -21,7 +21,7 @@ function encrypt(text){
 
 function decrypt(text){
     if (text === null || typeof text === 'undefined') {return text;};
-    var decipher = crypto.createDecipher('aes-256-cbc', SERVER_SECRET);
+    var decipher = crypto.createDecipher('aes-256-cbc', config.secret);
     var dec = decipher.update(text,'hex','utf8');
     dec += decipher.final('utf8');
     return dec;
