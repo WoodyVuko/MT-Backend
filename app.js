@@ -57,10 +57,11 @@ app.use('/groups', groups);
 
 
 // passport config
-var Account = require('./models/accountSchema');
+var Account = require('./models/userSchema');
 passport.use(new LocalStrategy(Account.authenticate()));
 passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());
+
 // mongoose
 mongoose.connect(config.database);
 

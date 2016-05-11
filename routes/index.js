@@ -11,7 +11,7 @@
 
 var express = require('express');
 var passport = require('passport');
-var Account = require('../models/accountSchema');
+var Account = require('../models/userSchema');
 var router = express.Router();
 
 

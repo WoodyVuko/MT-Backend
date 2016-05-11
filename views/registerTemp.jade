@@ -1,0 +1,35 @@
+//
+   Created by Vuko on 15.04.16.
+
+extends layout
+
+block content
+    .container
+        h1 Registrierung
+        p.lead Bitte Registrieren sie sich mit Ihrem Benutzernamen und Passwort
+        br
+        form(role='form', action="users/register",method="post", style='max-width: 300px;')
+            .form-group
+                input.form-control(type='text', name="username", placeholder='Benutzername')
+            .form-group
+                input.form-control(type='email', name="email", placeholder='eMail')
+            .form-group
+                input.form-control(type='password', name="password", placeholder='Passwort')
+            .form-group
+                input.form-control(type='firstname', name="firstname", placeholder='Vorname')
+            .form-group
+                input.form-control(type='lastname', name="lastname", placeholder='Nachname')
+            .form-group
+                input.form-control(type='company', name="company", placeholder='Firmenname')
+            .form-group
+                input.form-control(type='city', name="city", placeholder='Stadt')
+            .form-group
+                input.form-control(type='zip', name="zip", placeholder='PLZ')
+            .form-group
+                input.form-control(type='street', name="street", placeholder='Straße')
+            .form-group
+                input.form-control(type='streetnumber', name="streetnumber", placeholder='Hausnummer')
+            button.btn.btn-default(type='submit') Absenden
+        &nbsp;
+    a(href='/')
+        button.btn.btn-primary(type="button") Abbrechen

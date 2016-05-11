@@ -67,7 +67,7 @@ router.post('/authenticate', function(req, res) {
 
         // if user is found and password is right
         // create a token
-        var token = jwt.sign(user, req.app.get('superSecret'), { expiresIn: "1h" });
+        var token = jwt.sign(user, req.app.get('superSecret'), { expiresIn: "12h" });
 
         // return the information including token as JSON
         res.json({
@@ -87,7 +87,7 @@ router.post('/authenticate', function(req, res) {
 router.use(function(req, res, next) {
 
   // check header or url parameters or post parameters for token
-  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  var token = req.body['x-access-token'] || req.query['x-access-token'] || req.headers['x-access-token'] || req.cookies['token'];
 
   // decode token
   if (token) {
