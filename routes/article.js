@@ -78,6 +78,7 @@ router.route("/add")
         db.allergics = req.body.allergics;
         db.img = req.body.img;
         db.group = req.body.group;
+        db.usrID = req.body.userid;
         db.save(function(err){
             // save() will run insert() command of MongoDB.
             // it will add new data in collection.
@@ -148,6 +149,10 @@ router.route("/:id")
                 }
                 if(req.body.img !== undefined) {
                     data.img = req.body.img;
+                }
+                if(req.body.userid !== undefinded) {
+                    data.usrID = req.body.userid;
+
                 }
                 // save the data
                 data.save(function(err){

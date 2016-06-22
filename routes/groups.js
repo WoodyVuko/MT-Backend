@@ -4,9 +4,45 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
+var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 
 // Accesspoint to Database
 var dbGroups  = require('../models/groupsSchema');
+var dbAllergic  = require('../models/allergicsSchema');
+
+//
+///************** Middleware for protection *********/
+//// route middleware to verify a token
+router.use(function(req, res, next) {
+
+   // check header or url parameters or post parameters for token
+   var token = req.body['x-access-token'] || req.query['x-access-token'] || req.headers['x-access-token'] || req.cookies['token'];
+
+   // decode token
+   if (token) {
+
+       // verifies secret and checks exp
+       jwt.verify(token, req.app.get('superSecret'), function(err, decoded) {
+           if (err) {
+               return res.json({ success: false, message: 'Failed to authenticate token.' });
+           } else {
+               // if everything is good, save to request for use in other routes
+               req.decoded = decoded;
+               next();
+           }
+       });
+
+   } else {
+
+       // if there is no token
+       // return an error
+       return res.status(403).send({
+           success: false,
+           message: 'No token provided. Please Log In'
+       });
+
+   }
+});
 
 /********* Get all Groups  **********************/
 /***********************************************/
@@ -36,28 +72,28 @@ router.route("/add")
         //------------------------------------------------------
     })
     .post(function(req,res){
-        console.log(req.body);
-        var db = new dbGroups;
-        var response = {};
+            console.log(req.body);
+            var db = new dbGroups;
+            var response = {};
 
-        // fetch all from Schema
-        db.name = req.body.name;
-        db.desc = req.body.desc;
-        db.userID = req.body.userID;
-        db.shortID = req.body.shortID;
-        db.img = req.body.img;
+            // fetch all from Schema
+            db.name = req.body.name;
+            db.desc = req.body.desc;
+            db.userID = req.body.userID;
+            db.shortID = req.body.shortID;
+            db.img = req.body.img;
 
-        db.save(function(err){
-            // save() will run insert() command of MongoDB.
-            // it will add new data in collection.
-            if(err) {
-                response = {"error" : true,"message" : "Error adding data"};
-                console.log(err);
-            } else {
-                response = {"error" : false,"message" : "Data added"};
-            }
-            res.json(response);
-        });
+            db.save(function(err){
+                // save() will run insert() command of MongoDB.
+                // it will add new data in collection.
+                if(err) {
+                    response = {"error" : true,"message" : "Error adding data"};
+                    console.log(err);
+                } else {
+                    response = {"error" : false,"message" : "Data added"};
+                }
+                res.json(response);
+            });
     });
 
 
@@ -152,6 +188,25 @@ router.route("/:id")
             }
 
 
+        });
+    });
+
+router.route("/dropDown/:id")
+    .get(function(req,res){
+        var response = {};
+
+        dbGroups.find({ "userID" : req.params.id }, function(err,data_1){
+            dbAllergic.find({}, function(err,data_2){
+                console.log(data_1, data_2);
+                // This will run Mongo Query to fetch data based on email.
+                if(err) {
+                    response = {"error" : true,"message" : "Error fetching data"};
+                } else {
+                    response = {"error" : false,"message_1" : data_1, "message_2" : data_2};
+                }
+                res.json(response);
+
+            });
         });
     });
 

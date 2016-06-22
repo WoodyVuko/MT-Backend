@@ -6,14 +6,15 @@ var uniqueValidator = require('mongoose-unique-validator');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var articel = new Schema({
+var article = new Schema({
     group: { type: String, required: true },
     name: { type: String, required: true },
     price: { type: String, required: true },
+    usrID: { type: String, required: true },
     allergics: Array,
     img: String
 },{collection : "userArticles"});
 //},{collection : "accounts"});
 //Account.plugin(passportLocalMongoose);
 
-module.exports = mongoose.model('userArticle', articel);
+module.exports = mongoose.model('userArticle', article);

@@ -74,7 +74,8 @@ router.post('/authenticate', function(req, res) {
         res.json({
           success: true,
           message: 'Enjoy your token!',
-          token: token
+          token: token,
+          userID: user._id
         });
       }
 
@@ -90,7 +91,7 @@ router.use(function(req, res, next) {
   // check header or url parameters or post parameters for token
   var token = req.body['x-access-token'] || req.query['x-access-token'] || req.headers['x-access-token'] || req.cookies['token'];
 
-  console.log("WHAAAT" , token);
+  //console.log("WHAAAT" , token);
   // decode token
   if (token) {
 
