@@ -16,6 +16,7 @@ var users = require('./routes/users');
 var home = require('./routes/home');
 var article = require('./routes/article');
 var groups = require('./routes/groups');
+var allergics = require('./routes/allergics');
 var config = require('./private/config'); // get our config file
 
 var cors = require('cors');
@@ -52,8 +53,9 @@ app.use('/', routes);
 //app.use('/', index);
 app.use('/users', users);
 app.use('/home', home);
-app.use('/article/', article);
+app.use('/article', article);
 app.use('/groups', groups);
+app.use('/allergics', allergics);
 
 
 // passport config

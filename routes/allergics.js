@@ -1,12 +1,12 @@
 /**
- * Created by Vuko on 26.04.16.
+ * Created by Vuko on 24.05.16.
  */
 
 var express = require('express');
 var router = express.Router();
 
 // Accesspoint to Database
-var dbArticle  = require('../models/articleSchema');
+var dbAllergic  = require('../models/allergicsSchema');
 
 //
 ///************** Middleware for protection *********/
@@ -47,7 +47,7 @@ var dbArticle  = require('../models/articleSchema');
 router.route("/")
     .get(function(req,res){
         var response = {};
-        dbArticle.find({},function(err,data){
+        dbAllergic.find({},function(err,data){
             //console.log(data);
             // Mongo command to fetch all data from collection.
             console.log(req.message);
@@ -60,7 +60,7 @@ router.route("/")
         });
     });
 
-/********* Add a Article  **********************/
+/********* Add a Allergics  **********************/
 /***********************************************/
 
 router.route("/add")
@@ -69,15 +69,12 @@ router.route("/add")
     })
     .post(function(req,res){
         //console.log(data);
-        var db = new dbArticle;
+        var db = new dbAllergic;
         var response = {};
-        console.log(req.body);
 
-        db.name = req.body.name;
-        db.price = req.body.price;
-        db.allergics = req.body.allergics;
-        db.img = req.body.img;
-        db.group = req.body.group;
+        db.shortName = req.body.shortName;
+        db.longName = req.body.longName;
+
         db.save(function(err){
             // save() will run insert() command of MongoDB.
             // it will add new data in collection.
@@ -98,7 +95,7 @@ router.route("/:id")
     .get(function(req,res){
         var response = {};
         if(req.params.id.indexOf("1") > -1 || req.params.id.indexOf("2") > -1 || req.params.id.indexOf("3") > -1 || req.params.id.indexOf("4") > -1 || req.params.id.indexOf("5") > -1 || req.params.id.indexOf("6") > -1 || req.params.id.indexOf("7") > -1 || req.params.id.indexOf("8") > -1 || req.params.id.indexOf("9") > -1)  {
-            dbArticle.findById(req.params.id,function(err,data){
+            dbAllergic.findById(req.params.id,function(err,data){
                 console.log(err);
                 // This will run Mongo Query to fetch data based on ID.
                 if(err) {
@@ -108,10 +105,10 @@ router.route("/:id")
                     console.log(data);
                 }
                 res.json(response);
-                });
-            }
+            });
+        }
         else{
-            dbArticle.findOne({ 'name': req.params.id }, 'name',function(err,data){
+            dbAllergic.findOne({ 'name': req.params.id }, 'name',function(err,data){
                 //console.log(data);
                 if(err) {
                     response = {"error" : true,"message" : "Error fetching data"};
@@ -122,32 +119,23 @@ router.route("/:id")
                 res.json(response);
             });
         }
-        })
+    })
     .put(function(req,res){
         var response = {};
         // first find out record exists or not
         // if it does then update the record
-        dbArticle.findById(req.params.id,function(err,data){
+        dbAllergic.findById(req.params.id,function(err,data){
             if(err) {
                 response = {"error" : true,"message" : "Error fetching data"};
             } else {
                 // we got data from Mongo.
                 // change it accordingly.
-                if(req.body.name!== undefined) {
+                if(req.body.shortName!== undefined) {
                     // case where email needs to be updated.
-                    data.name = req.body.name;
+                    data.shortName = req.body.shortName;
                 }
-                if(req.body.price !== undefined) {
-                    data.price = req.body.price;
-                }
-                if(req.body.group !== undefined) {
-                    data.group = req.body.group;
-                }
-                if(req.body.allergics !== undefined) {
-                    data.allergics = req.body.allergics;
-                }
-                if(req.body.img !== undefined) {
-                    data.img = req.body.img;
+                if(req.body.longName !== undefined) {
+                    data.longName = req.body.longName;
                 }
                 // save the data
                 data.save(function(err){
@@ -164,12 +152,12 @@ router.route("/:id")
     .delete(function(req,res) {
         var response = {};
         // find the data
-        dbArticle.findById(req.params.id, function (err, data) {
+        dbAllergic.findById(req.params.id, function (err, data) {
             if (err) {
                 response = {"error": true, "message": "Error fetching data"};
             } else {
                 // data exists, remove it.
-                dbArticle.remove({_id: req.params.id}, function (err) {
+                dbAllergic.remove({_id: req.params.id}, function (err) {
                     if (err) {
                         response = {"error": true, "message": "Error deleting data"};
                     } else {

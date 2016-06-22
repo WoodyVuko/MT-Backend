@@ -1,13 +1,15 @@
 /**
  * Created by Vuko on 29.04.16.
  */
+var uniqueValidator = require('mongoose-unique-validator');
+
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var articel = new Schema({
-    group: String,
-    name: String,
-    price: String,
+    group: { type: String, required: true },
+    name: { type: String, required: true },
+    price: { type: String, required: true },
     allergics: Array,
     img: String
 },{collection : "userArticles"});

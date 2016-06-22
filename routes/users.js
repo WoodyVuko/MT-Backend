@@ -31,6 +31,7 @@ router.route("/register")
       // Password is getting crypted at the Schema
       db.password = req.body.password;
       db.firstname = req.body.firstname;
+      console.log(req.message);
       db.save(function(err){
         // save() will run insert() command of MongoDB.
         // it will add new data in collection.
@@ -89,6 +90,7 @@ router.use(function(req, res, next) {
   // check header or url parameters or post parameters for token
   var token = req.body['x-access-token'] || req.query['x-access-token'] || req.headers['x-access-token'] || req.cookies['token'];
 
+  console.log("WHAAAT" , token);
   // decode token
   if (token) {
 
@@ -109,7 +111,7 @@ router.use(function(req, res, next) {
     // return an error
     return res.status(403).send({
       success: false,
-      message: 'No token provided.'
+      message: 'No token provided. Please Log In'
     });
 
   }
