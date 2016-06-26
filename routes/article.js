@@ -7,6 +7,7 @@ var router = express.Router();
 
 // Accesspoint to Database
 var dbArticle  = require('../models/articleSchema');
+var dbGroups  = require('../models/groupsSchema');
 
 //
 ///************** Middleware for protection *********/
@@ -71,25 +72,30 @@ router.route("/add")
         //console.log(data);
         var db = new dbArticle;
         var response = {};
-        console.log(req.body);
+        //console.log(req.body);
 
-        db.name = req.body.name;
-        db.price = req.body.price;
-        db.allergics = req.body.allergics;
-        db.img = req.body.img;
-        db.group = req.body.group;
-        db.usrID = req.body.userid;
-        db.save(function(err){
-            // save() will run insert() command of MongoDB.
-            // it will add new data in collection.
-            if(err) {
-                response = {"error" : true,"message" : "Error adding data"};
-                console.log(err);
-            } else {
-                response = {"error" : false,"message" : "Data added"};
-            }
-            res.json(response);
+        dbGroups.find({ "shortID" : req.body.group }, function(err,data){
+            db.group = data[0].name;
+
+            db.name = req.body.name;
+            db.price = req.body.price;
+            db.allergics = req.body.allergics;
+            db.img = req.body.img;
+            db.usrID = req.body.usrID;
+
+            db.save(function(err){
+                // save() will run insert() command of MongoDB.
+                // it will add new data in collection.
+                if(err) {
+                    response = {"error" : true,"message" : "Error adding data"};
+                    console.log(err);
+                } else {
+                    response = {"error" : false,"message" : "Data added"};
+                }
+                res.json(response);
+            });
         });
+
     });
 
 /********* CRUD /find by ID ********************/

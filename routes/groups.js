@@ -197,7 +197,8 @@ router.route("/dropDown/:id")
 
         dbGroups.find({ "userID" : req.params.id }, function(err,data_1){
             dbAllergic.find({}, function(err,data_2){
-                console.log(data_1, data_2);
+                //console.log(data_1, data_2);
+                console.log("Works");
                 // This will run Mongo Query to fetch data based on email.
                 if(err) {
                     response = {"error" : true,"message" : "Error fetching data"};
