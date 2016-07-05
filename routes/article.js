@@ -152,8 +152,14 @@ router.route("/")
                     }
                     console.log("Alle Werte: ", alleWerte);
 
+                    if (err) {
+                        response = {"error": true, "message": "Error fetching data"};
+                    } else {
+                        response = {"error": false, "message": data, "groups": alleWerte};
+                    }
+                    res.json(response);
                 })
-            })
+    })
 
     });
 
