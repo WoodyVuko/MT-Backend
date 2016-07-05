@@ -8,7 +8,7 @@ var router = express.Router();
 // Accesspoint to Database
 var dbArticle  = require('../models/articleSchema');
 var dbGroups  = require('../models/groupsSchema');
-
+var dbAllergic  = require('../models/allergicsSchema');
 //
 ///************** Middleware for protection *********/
 //// route middleware to verify a token
@@ -76,91 +76,71 @@ function searchForNameViaID(tempUserID)
 /***********************************************/
 router.route("/")
     .get(function(req,res) {
-        var response = {};
-        var changedGroups = [];
-        var changesAllergics = [];
-        console.log(req);
-        //console.log(data[1].group);
-
-
-        dbArticle.find({}, function (err, data) {
-
-
-            for (var i = 0; i < data.length; i++) {
-                for (var n = 0; n < data[i].group.length; n++) {
-                    console.log("ID: ", data[i].group[n].id, "   data_1: ");
-                    //console.log(searchForNameViaID(data[i].group[n].id, data[i].usrID));
-                    changedGroups.push(searchForNameViaID(data[i].usrID, data[i].group[n].id));
-                    //changedGroups.push(data_1);
-                    //console.log("Push:", data_1);
-                }
-
-                console.log("Next");
-            }
-
-            console.log("Alle Artikel wurden ausgegeben!");
-            //console.log(data);
-            // Mongo command to fetch all data from collection.
-            console.log(req.message);
-            if (err) {
-                response = {"error": true, "message": "Error fetching data"};
-            } else {
-                response = {"error": false, "message": data};
-            }
-            res.json(response);
-            console.log(changedGroups);
-
-        })
     })
 
     .post(function(req,res){
             var response = {};
 
         // Find Artikel via UserID
-            var alleWerte = [];
+            var allValuesAllergics = [];
+            var allValuesGroups = [];
             var temp = [];
-                var NICHTBENUTZT = [{ "articleID" : "", "values" : [] }];
-            var test = '';
 
             dbGroups.find({"userID": req.body.userid}, function (err, data) {
-                dbArticle.find({}, function (err, data_2) {
-                     //console.log(data_2);
-                     //console.log("_____________________________________________________________________________");
-                     //console.log(data);
+                dbAllergic.find({}, function (err, data_1) {
+                    dbArticle.find({}, function (err, data_2) {
+                        //console.log(data_2);
+                        //console.log("_____________________________________________________________________________");
+                        //console.log(data);
 
-                    // Hole ID's aus den Artikeln
-                    for (var i = 0; i < data_2.length; i++) {
-                        for (var n = 0; n < data_2[i].group.length; n++)
-                        {
-                            var saveStatus = data_2[i].group.length;
-                            // Vergleiche die ID's mit der Gruppe für den Namen
-                            for(var m = 0; m < data.length; m++)
-                            {
-                                //console.log("i: ", i, " - n: ", n, " - m: ", m , " SAVE:", saveStatus);
-                                if(data[m]._id == data_2[i].group[n].id && (n + m ) <= saveStatus)
-                                {
-                                    temp.push(data[m].name);
-                                    //console.log(data[m].name);
+                        // Hole ID's aus den Artikeln
+                        for (var i = 0; i < data_2.length; i++) {
+                            for (var n = 0; n < data_2[i].group.length; n++) {
+                                var saveStatus = data_2[i].group.length;
+                                // Vergleiche die ID's mit der Gruppe für den Namen
+                                for (var m = 0; m < data.length; m++) {
+                                    //console.log("i: ", i, " - n: ", n, " - m: ", m , " SAVE:", saveStatus);
+                                    if (data[m]._id == data_2[i].group[n].id && (n + m ) <= saveStatus) {
+                                        temp.push(data[m].name);
+                                        //console.log(data[m].name);
+                                    }
+                                    //console.log(test);
                                 }
-                                //console.log(test);
                             }
+                            // Werte übertragen und 'temp' leeren
+                            //console.log("Temp: ", temp);
+                            allValuesGroups.push(temp);
+                            temp = [];
                         }
-                        // Werte übertragen und 'temp' leeren
-                        //console.log("Temp: ", temp);
-                        alleWerte.push(temp);
-                        temp = [];
-                    }
-                    console.log("Alle Werte: ", alleWerte);
 
-                    if (err) {
-                        response = {"error": true, "message": "Error fetching data"};
-                    } else {
-                        response = {"error": false, "message": data, "groups": alleWerte};
-                    }
-                    res.json(response);
+                        for (var i = 0; i < data_2.length; i++) {
+                            for (var n = 0; n < data_2[i].allergics.length; n++) {
+                                var saveStatus = data_2[i].allergics.length;
+                                    // console.log(data_2[i].allergics[n].id);
+                                    //console.log(data_1);
+                                    for (var m = 0; m < data_1.length; m++) {
+                                        //console.log("i: ", i, " - n: ", n, " - m: ", m , " SAVE:", saveStatus);
+                                        if(data_1[m]._id == data_2[i].allergics[n].id && (n + m ) <= saveStatus)
+                                        {
+                                            temp.push(data_1[m].shortName);
+                                            //console.log(data_1[m].shortName);
+                                        }
+
+                                    }
+                            }
+                            //console.log("Temp: ", temp);
+                            allValuesAllergics.push(temp);
+                            temp = [];
+                        }
+                        if (err) {
+                            response = {"error": true, "message": "Error fetching data"};
+                        } else {
+                            response = {"error": false, "message": data_2, "groups": allValuesGroups, "allergics": allValuesAllergics};
+                        }
+                        res.json(response);
+                    })
                 })
-    })
-
+            })
     });
 
 /********* Add a Article  **********************/
