@@ -43,22 +43,118 @@ var dbGroups  = require('../models/groupsSchema');
 //    }
 //});
 
+function inArray(needle, haystack) {
+    var length = haystack.length;
+    for(var i = 0; i < length; i++) {
+        if(haystack[i] == needle)
+            return true;
+    }
+    return false;
+}
+
+function searchForNameViaID(tempUserID)
+{
+    var temp = "";
+    dbGroups.find({"userID": tempUserID}, function (err, data) {
+        for(var i = 0; i < data.length; i++)
+        {
+            // if(data[i]._id == tempSearchID)
+            // {
+            //     //console.log("________________________________________");
+            //     temp = data[i].name;
+            //     console.log(temp);
+            // }
+            temp = data[i].name;
+        }
+
+    })
+    return temp;
+}
+
+
 /********* Get all Articels  ********************/
 /***********************************************/
 router.route("/")
-    .get(function(req,res){
+    .get(function(req,res) {
         var response = {};
-        dbArticle.find({},function(err,data){
+        var changedGroups = [];
+        var changesAllergics = [];
+        console.log(req);
+        //console.log(data[1].group);
+
+
+        dbArticle.find({}, function (err, data) {
+
+
+            for (var i = 0; i < data.length; i++) {
+                for (var n = 0; n < data[i].group.length; n++) {
+                    console.log("ID: ", data[i].group[n].id, "   data_1: ");
+                    //console.log(searchForNameViaID(data[i].group[n].id, data[i].usrID));
+                    changedGroups.push(searchForNameViaID(data[i].usrID, data[i].group[n].id));
+                    //changedGroups.push(data_1);
+                    //console.log("Push:", data_1);
+                }
+
+                console.log("Next");
+            }
+
+            console.log("Alle Artikel wurden ausgegeben!");
             //console.log(data);
             // Mongo command to fetch all data from collection.
             console.log(req.message);
-            if(err) {
-                response = {"error" : true,"message" : "Error fetching data"};
+            if (err) {
+                response = {"error": true, "message": "Error fetching data"};
             } else {
-                response = {"error" : false,"message" : data};
+                response = {"error": false, "message": data};
             }
             res.json(response);
-        });
+            console.log(changedGroups);
+
+        })
+    })
+
+    .post(function(req,res){
+            var response = {};
+
+        // Find Artikel via UserID
+            var alleWerte = [];
+            var temp = [];
+                var NICHTBENUTZT = [{ "articleID" : "", "values" : [] }];
+            var test = '';
+
+            dbGroups.find({"userID": req.body.userid}, function (err, data) {
+                dbArticle.find({}, function (err, data_2) {
+                     //console.log(data_2);
+                     //console.log("_____________________________________________________________________________");
+                     //console.log(data);
+
+                    // Hole ID's aus den Artikeln
+                    for (var i = 0; i < data_2.length; i++) {
+                        for (var n = 0; n < data_2[i].group.length; n++)
+                        {
+                            var saveStatus = data_2[i].group.length;
+                            // Vergleiche die ID's mit der Gruppe für den Namen
+                            for(var m = 0; m < data.length; m++)
+                            {
+                                //console.log("i: ", i, " - n: ", n, " - m: ", m , " SAVE:", saveStatus);
+                                if(data[m]._id == data_2[i].group[n].id && (n + m ) <= saveStatus)
+                                {
+                                    temp.push(data[m].name);
+                                    //console.log(data[m].name);
+                                }
+                                //console.log(test);
+                            }
+                        }
+                        // Werte übertragen und 'temp' leeren
+                        //console.log("Temp: ", temp);
+                        alleWerte.push(temp);
+                        temp = [];
+                    }
+                    console.log("Alle Werte: ", alleWerte);
+
+                })
+            })
+
     });
 
 /********* Add a Article  **********************/
@@ -74,14 +170,16 @@ router.route("/add")
         var response = {};
         //console.log(req.body);
 
-        dbGroups.find({ "shortID" : req.body.group }, function(err,data){
-            db.group = data[0].name;
-
+        //dbGroups.find({ "shortID" : req.body.group }, function(err,data){
+            console.log("Artikel soll hinzugefügt werden!");
+            //console.log(data);
+            //db.group = data[0].name;
+            db.group = req.body.group;
             db.name = req.body.name;
             db.price = req.body.price;
             db.allergics = req.body.allergics;
             db.img = req.body.img;
-            db.usrID = req.body.usrID;
+            db.usrID = req.body.userid;
 
             db.save(function(err){
                 // save() will run insert() command of MongoDB.
@@ -94,7 +192,7 @@ router.route("/add")
                 }
                 res.json(response);
             });
-        });
+        //});
 
     });
 

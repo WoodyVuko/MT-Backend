@@ -7,7 +7,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var article = new Schema({
-    group: { type: String, required: true },
+    group: Array,
     name: { type: String, required: true },
     price: { type: String, required: true },
     usrID: { type: String, required: true },
