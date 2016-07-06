@@ -104,7 +104,7 @@ router.route("/")
                                         temp.push(data[m].name);
                                         //console.log(data[m].name);
                                     }
-                                    //console.log(test);
+                                    //console.log(temp);
                                 }
                             }
                             // Werte übertragen und 'temp' leeren
@@ -116,26 +116,37 @@ router.route("/")
                         for (var i = 0; i < data_2.length; i++) {
                             for (var n = 0; n < data_2[i].allergics.length; n++) {
                                 var saveStatus = data_2[i].allergics.length;
-                                    // console.log(data_2[i].allergics[n].id);
-                                    //console.log(data_1);
-                                    for (var m = 0; m < data_1.length; m++) {
-                                        //console.log("i: ", i, " - n: ", n, " - m: ", m , " SAVE:", saveStatus);
-                                        if(data_1[m]._id == data_2[i].allergics[n].id && (n + m ) <= saveStatus)
-                                        {
-                                            temp.push(data_1[m].shortName);
-                                            //console.log(data_1[m].shortName);
-                                        }
-
+                                // console.log(data_2[i].allergics[n].id);
+                                //console.log(data_1);
+                                for (var m = 0; m < data_1.length; m++) {
+                                    //console.log("i: ", i, " - n: ", n, " - m: ", m , " SAVE:", saveStatus);
+                                    if (data_1[m]._id == data_2[i].allergics[n].id && (n + m ) <= saveStatus) {
+                                        temp.push(data_1[m].shortName);
+                                        //console.log(data_1[m].shortName);
                                     }
+
+                                }
                             }
                             //console.log("Temp: ", temp);
                             allValuesAllergics.push(temp);
                             temp = [];
                         }
+
+                        // ID's in der Response mit den umgewandelten Arrays ersetzen
+                        for (var i = 0; i < data_2.length; i++) {
+
+                            data_2[i].allergics = allValuesAllergics[i];
+                            data_2[i].group = allValuesGroups[i];
+
+                        }
+
                         if (err) {
                             response = {"error": true, "message": "Error fetching data"};
                         } else {
-                            response = {"error": false, "message": data_2, "groups": allValuesGroups, "allergics": allValuesAllergics};
+                            response = {
+                                "error": false,
+                                "message": data_2
+                            };
                         }
                         res.json(response);
                     })
@@ -145,7 +156,6 @@ router.route("/")
 
 /********* Add a Article  **********************/
 /***********************************************/
-
 router.route("/add")
     .get(function(req,res){
         //------------------------------------------------------
