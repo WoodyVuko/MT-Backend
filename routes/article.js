@@ -196,34 +196,64 @@ router.route("/add")
 /***********************************************/
 
 router.route("/:id")
-    .get(function(req,res){
+    .get(function(req,res) {
         var response = {};
-        if(req.params.id.indexOf("1") > -1 || req.params.id.indexOf("2") > -1 || req.params.id.indexOf("3") > -1 || req.params.id.indexOf("4") > -1 || req.params.id.indexOf("5") > -1 || req.params.id.indexOf("6") > -1 || req.params.id.indexOf("7") > -1 || req.params.id.indexOf("8") > -1 || req.params.id.indexOf("9") > -1)  {
-            dbArticle.findById(req.params.id,function(err,data){
-                console.log(err);
-                // This will run Mongo Query to fetch data based on ID.
-                if(err) {
-                    response = {"error" : true,"message" : "Error fetching data"};
-                } else {
-                    response = {"error" : false,"message" : data};
-                    console.log(data);
-                }
-                res.json(response);
-                });
-            }
-        else{
-            dbArticle.findOne({ 'name': req.params.id }, 'name',function(err,data){
+        if (req.params.id.indexOf("1") > -1 || req.params.id.indexOf("2") > -1 || req.params.id.indexOf("3") > -1 || req.params.id.indexOf("4") > -1 || req.params.id.indexOf("5") > -1 || req.params.id.indexOf("6") > -1 || req.params.id.indexOf("7") > -1 || req.params.id.indexOf("8") > -1 || req.params.id.indexOf("9") > -1) {
+                dbArticle.findById(req.params.id, function (err, data) {
+                    dbAllergic.find({}, function (err_2, data_2) {
+                        dbGroups.find({}, function (err_3, data_3) {
+
+                            var foundAllergics = [];
+                            // Suche ID von Allergics in der DB und fülle den Namen nach
+                            for (var n = 0; n < data.allergics.length; n++) {
+                                for (var i = 0; i < data_2.length; i++) {
+                                    if (data.allergics[n].id == data_2[i]._id) {
+                                        foundAllergics.push(data_2[i]);
+                                    }
+                                }
+                            }
+
+                            var foundGroups = [];
+                            // Suche ID von Groups in der DB und fülle den Namen nach
+                            for (var n = 0; n < data.group.length; n++) {
+                                for (var i = 0; i < data_3.length; i++) {
+                                    if (data.group[n].id == data_3[i]._id) {
+                                        foundGroups.push(data_3[i]);
+                                    }
+                                }
+                            }
+                            data.group = foundGroups;
+                            data.allergics = foundAllergics;
+
+                            //console.log(data);
+
+
+
+                            // This will run Mongo Query to fetch data based on ID.
+                            if (err) {
+                                response = {"error": true, "message": "Error fetching data"};
+                            } else {
+                                response = {"error": false, "message": data};
+                                //console.log(data);
+                            }
+                            res.json(response);
+                        });
+                    })
+                })
+        }
+        else {
+            dbArticle.findOne({'name': req.params.id}, 'name', function (err, data) {
                 //console.log(data);
-                if(err) {
-                    response = {"error" : true,"message" : "Error fetching data"};
+                if (err) {
+                    response = {"error": true, "message": "Error fetching data"};
                 } else {
-                    response = {"error" : false,"message" : data};
+                    response = {"error": false, "message": data};
                     //console.log(data);
                 }
                 res.json(response);
             });
         }
-        })
+    })
     .put(function(req,res){
         var response = {};
         // first find out record exists or not
@@ -250,7 +280,7 @@ router.route("/:id")
                 if(req.body.img !== undefined) {
                     data.img = req.body.img;
                 }
-                if(req.body.userid !== undefinded) {
+                if(req.body.userid !== undefined) {
                     data.usrID = req.body.userid;
 
                 }
