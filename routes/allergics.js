@@ -4,6 +4,7 @@
 
 var express = require('express');
 var router = express.Router();
+var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 
 // Accesspoint to Database
 var dbAllergic  = require('../models/allergicsSchema');
@@ -11,42 +12,43 @@ var dbAllergic  = require('../models/allergicsSchema');
 //
 ///************** Middleware for protection *********/
 //// route middleware to verify a token
-//router.use(function(req, res, next) {
-//
-//    // check header or url parameters or post parameters for token
-//    var token = req.body['x-access-token'] || req.query['x-access-token'] || req.headers['x-access-token'] || req.cookies['token'];
-//
-//    // decode token
-//    if (token) {
-//
-//        // verifies secret and checks exp
-//        jwt.verify(token, req.app.get('superSecret'), function(err, decoded) {
-//            if (err) {
-//                return res.json({ success: false, message: 'Failed to authenticate token.' });
-//            } else {
-//                // if everything is good, save to request for use in other routes
-//                req.decoded = decoded;
-//                next();
-//            }
-//        });
-//
-//    } else {
-//
-//        // if there is no token
-//        // return an error
-//        return res.status(403).send({
-//            success: false,
-//            message: 'No token provided. Please Log In'
-//        });
-//
-//    }
-//});
+router.use(function(req, res, next) {
+
+    // check header or url parameters or post parameters for token
+    var token = req.body['x-access-token'] || req.query['x-access-token'] || req.headers['x-access-token'] || req.cookies['token'];
+
+    // decode token
+    if (token) {
+
+        // verifies secret and checks exp
+        jwt.verify(token, req.app.get('superSecret'), function(err, decoded) {
+            if (err) {
+                return res.json({ success: false, message: 'Failed to authenticate token.' });
+            } else {
+                // if everything is good, save to request for use in other routes
+                req.decoded = decoded;
+                next();
+            }
+        });
+
+    } else {
+
+        // if there is no token
+        // return an error
+        return res.status(403).send({
+            success: false,
+            message: 'No token provided. Please Log In'
+        });
+
+    }
+});
 
 /********* Get all Articels  ********************/
 /***********************************************/
 router.route("/")
     .get(function(req,res){
         var response = {};
+
         dbAllergic.find({},function(err,data){
             //console.log(data);
             // Mongo command to fetch all data from collection.
@@ -57,7 +59,55 @@ router.route("/")
                 response = {"error" : false,"message" : data};
             }
             res.json(response);
-        });
+        })
+    })
+            .post(function(req,res) {
+                var response = {};
+                console.log("2", req.headers);
+
+                dbAllergic.find({}, function (err, data) {
+                    //console.log(data);
+                    // Mongo command to fetch all data from collection.
+                    console.log(req.message);
+                    if (err) {
+                        response = {"error": true, "message": "Error fetching data"};
+                    } else {
+                        response = {"error": false, "message": data};
+                    }
+                    res.json(response);
+                })
+            })
+                    .put(function(req,res){
+                        var response = {};
+                        // first find out record exists or not
+                        // if it does then update the record
+                        dbAllergic.findById(req.body.id,function(err,data) {
+                            if (err) {
+                                response = {"error": true, "message": "Error fetching data"};
+                            } else {
+                                // we got data from Mongo.
+                                // change it accordingly.
+                                if (req.body.shortName !== undefined) {
+                                    // case where email needs to be updated.
+                                    data.shortName = req.body.shortName;
+                                }
+                                if (req.body.longName !== undefined) {
+                                    data.longName = req.body.longName;
+                                }
+                                if (req.body.userid !== undefined) {
+                                    data.userid = req.body.userid;
+                                }
+                                // save the data
+                                data.save(function (err) {
+                                    if (err) {
+                                        response = {"error": true, "message": "Error updating data"};
+                                    } else {
+                                        response = {"error": false, "message": "Data is updated for " + req.params.id};
+                                    }
+                                    res.json(response);
+                                })
+                            }
+                        })
     });
 
 /********* Add a Allergics  **********************/
@@ -102,7 +152,6 @@ router.route("/:id")
                     response = {"error" : true,"message" : "Error fetching data"};
                 } else {
                     response = {"error" : false,"message" : data};
-                    console.log(data);
                 }
                 res.json(response);
             });
@@ -124,7 +173,7 @@ router.route("/:id")
         var response = {};
         // first find out record exists or not
         // if it does then update the record
-        dbAllergic.findById(req.params.id,function(err,data){
+        dbAllergic.findById(req.body.id,function(err,data){
             if(err) {
                 response = {"error" : true,"message" : "Error fetching data"};
             } else {
@@ -136,6 +185,9 @@ router.route("/:id")
                 }
                 if(req.body.longName !== undefined) {
                     data.longName = req.body.longName;
+                }
+                if(req.body.userid !== undefined) {
+                    data.userid = req.body.userid;
                 }
                 // save the data
                 data.save(function(err){
