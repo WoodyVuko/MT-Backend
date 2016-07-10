@@ -17,8 +17,8 @@ Hauptgruppen (Oberbegriff)
 var groups = new Schema({
     name: String,
     desc: String,
-    userID: String,
-    shortID: String,
+    userid: String,
+    shortid: String,
     img: String
 },{collection : "userGroups"});
 

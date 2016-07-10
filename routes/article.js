@@ -87,7 +87,7 @@ router.route("/")
             var allValuesGroups = [];
             var temp = [];
 
-            dbGroups.find({"userID": req.body.userid}, function (err, data) {
+            dbGroups.find(req.body.userid, function (err, data) {
                 dbAllergic.find({}, function (err, data_1) {
                     dbArticle.find({}, function (err, data_2) {
                         //console.log(data_2);
@@ -114,6 +114,7 @@ router.route("/")
                             temp = [];
                         }
 
+                        //console.log(allValuesGroups);
                         //console.log(data_2);
                         for (var i = 0; i < data_2.length; i++) {
                             for (var n = 0; n < data_2[i].allergics.length; n++) {

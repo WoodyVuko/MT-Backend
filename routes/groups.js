@@ -79,8 +79,8 @@ router.route("/add")
             // fetch all from Schema
             db.name = req.body.name;
             db.desc = req.body.desc;
-            db.userID = req.body.userID;
-            db.shortID = req.body.shortID;
+            db.userid = req.body.userid;
+            db.shortid = req.body.shortid;
             db.img = req.body.img;
 
             db.save(function(err){
@@ -104,14 +104,14 @@ router.route("/:id")
     .get(function(req,res){
         var response = {};
         if(req.params.id.indexOf("1") > -1 || req.params.id.indexOf("2") > -1 || req.params.id.indexOf("3") > -1 || req.params.id.indexOf("4") > -1 || req.params.id.indexOf("5") > -1 || req.params.id.indexOf("6") > -1 || req.params.id.indexOf("7") > -1 || req.params.id.indexOf("8") > -1 || req.params.id.indexOf("9") > -1)  {
-            dbGroups.findById(req.params.id,function(err,data){
+            dbGroups.findOne({"_id" : req.params.id}, function(err,data){
                 //console.log(err);
                 // This will run Mongo Query to fetch data based on ID.
                 if(err) {
                     response = {"error" : true,"message" : "Error fetching data"};
                 } else {
                     response = {"error" : false,"message" : data};
-                    console.log(data);
+                    //console.log(data);
                 }
                 res.json(response);
             });
@@ -133,7 +133,7 @@ router.route("/:id")
         var response = {};
         // first find out record exists or not
         // if it does then update the record
-        dbGroups.findById(req.params.id,function(err,data){
+        dbGroups.findOne(req.params.id,function(err,data){
             if(err) {
                 response = {"error" : true,"message" : "Error fetching data"};
             } else {
@@ -147,12 +147,12 @@ router.route("/:id")
                     // case where password needs to be updated
                     data.desc = req.body.desc;
                 }
-                if(req.body.userID !== undefined) {
+                if(req.body.userid !== undefined) {
                     // case where password needs to be updated
-                    data.userID = req.body.userID;
+                    data.userid = req.body.userid;
                 }
-                if(req.body.shortID !== undefined) {
-                    data.shortID = req.body.shortID;
+                if(req.body.shortid !== undefined) {
+                    data.shortid = req.body.shortid;
                 }
                 if(req.body.img !== undefined) {
                     data.img = req.body.img;
@@ -195,7 +195,7 @@ router.route("/dropDown/:id")
     .get(function(req,res){
         var response = {};
 
-        dbGroups.find({ "userID" : req.params.id }, function(err,data_1){
+        dbGroups.find(req.params.id , function(err,data_1){
             dbAllergic.find({}, function(err,data_2){
                 //console.log(data_1, data_2);
                 // This will run Mongo Query to fetch data based on email.
