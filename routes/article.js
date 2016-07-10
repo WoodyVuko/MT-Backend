@@ -4,6 +4,7 @@
 
 var express = require('express');
 var router = express.Router();
+var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 
 // Accesspoint to Database
 var dbArticle  = require('../models/articleSchema');
@@ -12,36 +13,36 @@ var dbAllergic  = require('../models/allergicsSchema');
 //
 ///************** Middleware for protection *********/
 //// route middleware to verify a token
-//router.use(function(req, res, next) {
-//
-//    // check header or url parameters or post parameters for token
-//    var token = req.body['x-access-token'] || req.query['x-access-token'] || req.headers['x-access-token'] || req.cookies['token'];
-//
-//    // decode token
-//    if (token) {
-//
-//        // verifies secret and checks exp
-//        jwt.verify(token, req.app.get('superSecret'), function(err, decoded) {
-//            if (err) {
-//                return res.json({ success: false, message: 'Failed to authenticate token.' });
-//            } else {
-//                // if everything is good, save to request for use in other routes
-//                req.decoded = decoded;
-//                next();
-//            }
-//        });
-//
-//    } else {
-//
-//        // if there is no token
-//        // return an error
-//        return res.status(403).send({
-//            success: false,
-//            message: 'No token provided. Please Log In'
-//        });
-//
-//    }
-//});
+router.use(function(req, res, next) {
+
+   // check header or url parameters or post parameters for token
+   var token = req.body['x-access-token'] || req.query['x-access-token'] || req.headers['x-access-token'] || req.cookies['token'];
+
+   // decode token
+   if (token) {
+
+       // verifies secret and checks exp
+       jwt.verify(token, req.app.get('superSecret'), function(err, decoded) {
+           if (err) {
+               return res.json({ success: false, message: 'Failed to authenticate token.' });
+           } else {
+               // if everything is good, save to request for use in other routes
+               req.decoded = decoded;
+               next();
+           }
+       });
+
+   } else {
+
+       // if there is no token
+       // return an error
+       return res.status(403).send({
+           success: false,
+           message: 'No token provided. Please Log In'
+       });
+
+   }
+});
 
 function inArray(needle, haystack) {
     var length = haystack.length;
@@ -100,7 +101,7 @@ router.route("/")
                                 // Vergleiche die ID's mit der Gruppe für den Namen
                                 for (var m = 0; m < data.length; m++) {
                                     //console.log("i: ", i, " - n: ", n, " - m: ", m , " SAVE:", saveStatus);
-                                    if (data[m]._id == data_2[i].group[n].id && (n + m ) <= saveStatus) {
+                                    if (data[m]._id == data_2[i].group[n].id ) {
                                         temp.push(data[m].name);
                                         //console.log(data[m].name);
                                     }
@@ -113,14 +114,16 @@ router.route("/")
                             temp = [];
                         }
 
+                        //console.log(data_2);
                         for (var i = 0; i < data_2.length; i++) {
                             for (var n = 0; n < data_2[i].allergics.length; n++) {
                                 var saveStatus = data_2[i].allergics.length;
-                                // console.log(data_2[i].allergics[n].id);
+                                //console.log("Data_2", data_2[i].allergics[n].id, " I:", i);
                                 //console.log(data_1);
                                 for (var m = 0; m < data_1.length; m++) {
                                     //console.log("i: ", i, " - n: ", n, " - m: ", m , " SAVE:", saveStatus);
-                                    if (data_1[m]._id == data_2[i].allergics[n].id && (n + m ) <= saveStatus) {
+                                    //console.log("Data_1", data_1[m]._id , " I: ", m);
+                                    if (data_1[m]._id == data_2[i].allergics[n].id ) {
                                         temp.push(data_1[m].shortName);
                                         //console.log(data_1[m].shortName);
                                     }

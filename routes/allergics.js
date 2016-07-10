@@ -52,7 +52,6 @@ router.route("/")
         dbAllergic.find({},function(err,data){
             //console.log(data);
             // Mongo command to fetch all data from collection.
-            console.log(req.message);
             if(err) {
                 response = {"error" : true,"message" : "Error fetching data"};
             } else {
@@ -81,7 +80,8 @@ router.route("/")
                         var response = {};
                         // first find out record exists or not
                         // if it does then update the record
-                        dbAllergic.findById(req.body.id,function(err,data) {
+                        dbAllergic.findOne({'id' : req.params.id}, function(err,data) {
+
                             if (err) {
                                 response = {"error": true, "message": "Error fetching data"};
                             } else {
@@ -124,6 +124,7 @@ router.route("/add")
 
         db.shortName = req.body.shortName;
         db.longName = req.body.longName;
+        db.userid = req.body.userid;
 
         db.save(function(err){
             // save() will run insert() command of MongoDB.
@@ -145,8 +146,7 @@ router.route("/:id")
     .get(function(req,res){
         var response = {};
         if(req.params.id.indexOf("1") > -1 || req.params.id.indexOf("2") > -1 || req.params.id.indexOf("3") > -1 || req.params.id.indexOf("4") > -1 || req.params.id.indexOf("5") > -1 || req.params.id.indexOf("6") > -1 || req.params.id.indexOf("7") > -1 || req.params.id.indexOf("8") > -1 || req.params.id.indexOf("9") > -1)  {
-            dbAllergic.findById(req.params.id,function(err,data){
-                console.log(err);
+            dbAllergic.findOne({"_id" : req.params.id}, function(err,data){
                 // This will run Mongo Query to fetch data based on ID.
                 if(err) {
                     response = {"error" : true,"message" : "Error fetching data"};
@@ -173,7 +173,9 @@ router.route("/:id")
         var response = {};
         // first find out record exists or not
         // if it does then update the record
-        dbAllergic.findById(req.body.id,function(err,data){
+        dbAllergic.findOne({"_id" : req.params.id},function(err,data){
+
+
             if(err) {
                 response = {"error" : true,"message" : "Error fetching data"};
             } else {
@@ -194,7 +196,7 @@ router.route("/:id")
                     if(err) {
                         response = {"error" : true,"message" : "Error updating data"};
                     } else {
-                        response = {"error" : false,"message" : "Data is updated for "+req.params.id};
+                        response = {"error" : false,"message" : "Data is updated for "+ req.params.id};
                     }
                     res.json(response);
                 })
