@@ -12,7 +12,8 @@ var article = new Schema({
     price: { type: String, required: true },
     usrID: { type: String, required: true },
     allergics: Array,
-    img: String
+    img: String,
+    desc : {type: String, required: true}
 },{collection : "userArticles"});
 //},{collection : "accounts"});
 //Account.plugin(passportLocalMongoose);

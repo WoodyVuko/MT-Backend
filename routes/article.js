@@ -170,6 +170,7 @@ router.route("/add")
         var response = {};
         //console.log(req.body);
 
+        console.log(req.body);
         //dbGroups.find({ "shortID" : req.body.group }, function(err,data){
             console.log("Artikel soll hinzugefügt werden!");
             //console.log(data);
@@ -180,7 +181,9 @@ router.route("/add")
             db.allergics = req.body.allergics;
             db.img = req.body.img;
             db.usrID = req.body.userid;
+            db.desc = req.body.desc;
 
+        console.log(db);
             db.save(function(err){
                 // save() will run insert() command of MongoDB.
                 // it will add new data in collection.
@@ -274,6 +277,9 @@ router.route("/:id")
                 }
                 if(req.body.price !== undefined) {
                     data.price = req.body.price;
+                }
+                if(req.body.desc !== undefined) {
+                    data.desc = req.body.desc;
                 }
                 if(req.body.group !== undefined) {
                     data.group = req.body.group;
