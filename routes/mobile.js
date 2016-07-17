@@ -14,6 +14,7 @@ var dbGroups  = require('../models/groupsSchema');
 var dbAllergic  = require('../models/allergicsSchema');
 var dbArticle  = require('../models/articleSchema');
 var dbTables = require('../models/tableSchema');
+
 //
 ///************** Middleware for protection *********/
 //// route middleware to verify a token
@@ -71,7 +72,7 @@ router.route("/")
 
 // Notiz: Doppelte Einträge
 
-router.route("/add")
+router.route("/menu/add")
     .get(function(req,res){
         //------------------------------------------------------
     })
@@ -85,6 +86,8 @@ router.route("/add")
         db.articleid = req.body.articleid;
         db.amount = req.body.amount;
         db.price = req.body.price;
+        db.userid = req.body.userid;
+        db.name = req.body.name;
 
         db.save(function(err){
             // save() will run insert() command of MongoDB.
@@ -103,17 +106,22 @@ router.route("/add")
 /********* CRUD find by ID *********************/
 /***********************************************/
 
-router.route("/:id")
-    .get(function(req,res){
+router.route("/table/:id")
+    .post(function(req,res){
         var response = {};
         if(req.params.id.indexOf("1") > -1 || req.params.id.indexOf("2") > -1 || req.params.id.indexOf("3") > -1 || req.params.id.indexOf("4") > -1 || req.params.id.indexOf("5") > -1 || req.params.id.indexOf("6") > -1 || req.params.id.indexOf("7") > -1 || req.params.id.indexOf("8") > -1 || req.params.id.indexOf("9") > -1)  {
-            dbTables.findOne({"_id" : req.params.id}, function(err,data){
-                //console.log(err);
+            dbTables.find({"userid" : req.params.id, "tablenumber" : req.body.table}, function(err,data){
                 // This will run Mongo Query to fetch data based on ID.
+
+                var temp = 0.00;
+                for (var i = 0; i < data.length; i++) {
+                    temp += data[i].amount * data[i].price;
+                }
+
                 if(err) {
                     response = {"error" : true,"message" : "Error fetching data"};
                 } else {
-                    response = {"error" : false,"message" : data};
+                    response = {"error" : false,"message" : data, "price" : temp};
                     //console.log(data);
                 }
                 res.json(response);
@@ -145,7 +153,9 @@ router.route("/:id")
                 if(req.body.price !== undefined) {
                     data.price = req.body.price;
                 }
-
+                if(req.body.userid !== undefined) {
+                    data.userid = req.body.userid;
+                }
                 // save the data
                 data.save(function(err){
                     if(err) {
@@ -221,6 +231,7 @@ router.route("/menu/d/:id")
             dbArticle.find({}, function(err,data_2) {
                 //console.log(data_1, data_2);
                 // This will run Mongo Query to fetch data based on email.
+                console.log(req.body);
                 var temp = [];
                 for (var i = 0; i < data_2.length; i++) {
                         if (data_2[i]._id == req.params.id) {

@@ -9,7 +9,9 @@ var table = new Schema({
     tablenumber: String,
     articleid: String,
     amount: String,
-    price: String
+    price: String,
+    userid: String,
+    name: String
 },{collection : "tempTable"});
 
-module.exports = mongoose.model('tempTable', table);
+module.exports = mongoose.model('table', table);
