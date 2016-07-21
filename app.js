@@ -18,6 +18,7 @@ var article = require('./routes/article');
 var groups = require('./routes/groups');
 var allergics = require('./routes/allergics');
 var mobile = require('./routes/mobile');
+var qr = require('./routes/qr');
 var config = require('./private/config'); // get our config file
 
 var cors = require('cors');
@@ -58,7 +59,7 @@ app.use('/article', article);
 app.use('/groups', groups);
 app.use('/allergics', allergics);
 app.use('/mobile', mobile);
-
+app.use('/tables', qr);
 
 // passport config
 var Account = require('./models/userSchema');
