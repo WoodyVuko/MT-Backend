@@ -15,11 +15,11 @@ Hauptgruppen (Oberbegriff)
     - Diverses
  */
 var groups = new Schema({
-    name: String,
-    desc: String,
-    userid: String,
-    shortid: String,
-    img: String
+    name: { type: String, required: true },
+    desc: { type: String, required: true },
+    userid: { type: String, required: true },
+    shortid: { type: String, required: true },
+    img: { type: String, required: true },
 },{collection : "userGroups"});
 
 module.exports = mongoose.model('userGroups', groups);

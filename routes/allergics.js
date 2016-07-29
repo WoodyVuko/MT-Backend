@@ -49,7 +49,7 @@ router.route("/")
     .get(function(req,res){
         var response = {};
 
-        dbAllergic.find({},function(err,data){
+        dbAllergic.find({"userid" : req.query.userid},function(err,data){
             //console.log(data);
             // Mongo command to fetch all data from collection.
             if(err) {
@@ -64,8 +64,7 @@ router.route("/")
                 var response = {};
                 console.log("2", req.headers);
 
-                dbAllergic.find({}, function (err, data) {
-                    //console.log(data);
+                dbAllergic.find({"userid" : req.query.userid}, function (err, data) {
                     // Mongo command to fetch all data from collection.
                     console.log(req.message);
                     if (err) {

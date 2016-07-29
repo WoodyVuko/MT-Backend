@@ -51,7 +51,7 @@ router.use(function(req, res, next) {
 router.route("/")
     .get(function(req,res){
         var response = {};
-        dbGroups.find({},function(err,data){
+        dbGroups.find({"userid" : req.query.userid},function(err,data){
             //console.log(data);
             // Mongo command to fetch all data from collection.
             if(err) {
@@ -195,9 +195,8 @@ router.route("/:id")
 router.route("/dropDown/:id")
     .get(function(req,res){
         var response = {};
-
-        dbGroups.find(req.params.id , function(err,data_1){
-            dbAllergic.find({}, function(err,data_2){
+        dbGroups.find({"userid" : req.params.id} , function(err,data_1){
+            dbAllergic.find({"userid" : req.params.id}, function(err,data_2){
                 //console.log(data_1, data_2);
                 // This will run Mongo Query to fetch data based on email.
                 if(err) {
@@ -218,7 +217,7 @@ router.route("/mobile/:id")
 
         var x = 1;
         dbGroups.find(req.params.id , function(err,data_1){
-            dbArticle.find({"usrID" : req.body.userid}, function(err,data_2) {
+            dbArticle.find({"userid" : req.query.userid},function(err,data_2) {
                 //console.log(data_1, data_2);
                 // This will run Mongo Query to fetch data based on email.
                 var temp = [];

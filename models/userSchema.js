@@ -37,6 +37,8 @@ var Account = new mongoose.Schema({
     zip: { type: String, required: true },
     street: { type: String, required: true },
     streetnumber: { type: String, required: true }
+
+
 },{collection : "userLogins"});
 
 Account.plugin(uniqueValidator);
